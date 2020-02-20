@@ -29,12 +29,14 @@ public class MyRoutingDataSource extends AbstractRoutingDataSource {
                          id = each.getValue();
                     }
                }
+               String tnsName = null;
                for (SessionData each : sessionList.getA()) {
                     if (each.session.equals(id)) {
-                         return each.session;
+                         tnsName = each.tnsName;
+                         break;
                     }
                }
-               return "test";
+               return tnsName;
           } catch (Exception ex) {
                return "test";
           }

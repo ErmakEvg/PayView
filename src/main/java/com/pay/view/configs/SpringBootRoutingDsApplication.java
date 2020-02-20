@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 @Configuration
 public class SpringBootRoutingDsApplication {
 
+     private static final String DRIVER_CLASS_NAME = "oracle.jdbc.OracleDriver";
+
      @Primary
      @Bean(name = "dataSource")
      public MyRoutingDataSource getDataSource() {
@@ -39,9 +41,14 @@ public class SpringBootRoutingDsApplication {
                e.printStackTrace();
           }
           Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
-          DriverManagerDataSource tds = new DriverManagerDataSource();
-          tds.setDriverClassName("oracle.jdbc.OracleDriver");
-          dataSourceMap.put("test", tds);
+          list.forEach(tnsNameFullConnectJDBC -> {
+               DriverManagerDataSource tds = new DriverManagerDataSource();
+               tds.setDriverClassName(DRIVER_CLASS_NAME);
+               tds.setUrl("jdbc:oracle:thin:@//" + tnsNameFullConnectJDBC.getIp() + ":" + tnsNameFullConnectJDBC.getPort()  + "//" + tnsNameFullConnectJDBC.getSid());
+               tds.setUsername("SISSP");
+               tds.setPassword("QWAZAR");
+               dataSourceMap.put(tnsNameFullConnectJDBC.getTnsname(), tds);
+          });
           dataSource.initDataSources(dataSourceMap);
 
           return dataSource;
